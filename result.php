@@ -19,7 +19,19 @@ session_start();
 </head>
 <body>
 
-  <p><?php echo $_SESSION['psw']?></p>
-  
+  <div class="container-fluid bg-primary vh-100 d-flex align-items-center">
+
+    <div class="container-lg text-center">
+
+      <h2 class="text-light text-center mb-4">La password generata è:</h2>
+
+      <p class="bg-info py-2 rounded-2 mb-4"><?php echo $_SESSION['psw']?></p>
+
+      <a href="./index.php" class="btn btn-light">Torna alla home</a>
+
+    </div>
+
+  </div>
+
 </body>
 </html>

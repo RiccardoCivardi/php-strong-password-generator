@@ -16,9 +16,17 @@ Dare all’utente anche la possibilità di permettere o meno la ripetizione di c
 
 <?php
 
-// Import functions.php
+// Faccio partire la $_SESSION se non è già attiva
+session_unset();
+if(isset($_SESSION)) {
+  session_start();
+}
 
+// Import functions.php
 require_once __DIR__ . '/functions.php';
+
+// Import vars.php
+require_once __DIR__ . '/vars.php';
 
 // var_dump($_SERVER);
 
@@ -27,21 +35,21 @@ var_dump($_GET);
 // se non è vuoto il parametro in GET genero la password
 if(!empty($_GET['psw-length'])){
 
-  // creo la variabile $psw come risultato della funzione password_generate
-  $psw = password_generate((int)$_GET['psw-length']);
-  
-  // apro la sessione
-  session_start();
-  // inizializzo la variabile di sessione
-  $_SESSION['psw'] = $psw;
-  // scelgo la destinazione
-  header('Location: ./result.php');
+  $response = isCorrectLength((int)$_GET['psw-length'], $minLimit, $maxLimit);
+
+  if($response) {
+
+    // creo la variabile $psw come risultato della funzione password_generate
+    $psw = passwordGenerate((int)$_GET['psw-length']);
+    
+    // inizializzo la variabile di sessione
+    $_SESSION['psw'] = $psw;
+    // scelgo la destinazione
+    header('Location: ./result.php');
+
+  }
 
 }
-
-
-// $psw_length = (int)$_GET['psw-length'];
-
 
 ?>
 
@@ -61,14 +69,94 @@ if(!empty($_GET['psw-length'])){
 
 <body>
 
-  <form action="<?php echo $_SERVER['PHP_SELF'] ?>" methods="GET">
-  
-  <input type="number" name="psw-length" class="form-control">
+  <div class="container-fluid bg-primary vh-100 d-flex align-items-center">
 
-  <button type="submit" class="btn btn-primary">INVIA</button>
+    <div class="container-lg">
 
-  
-  </form>
-  
+      <h1 class="text-light text-center mb-2">Strong Password Generator</h1>
+      <h2 class="text-light text-center mb-4">Genera una password sicura</h2>
+
+      <?php if(empty($_GET)) : ?>
+        <div class="alert alert-info text-center" role="alert">
+          Scegliere una password con un minimo di <?php echo $minLimit ?> 
+          e un massimo di <?php echo $maxLimit ?> caratteri.
+        </div>
+      <?php endif; ?>  
+
+      <?php if(isset($response) && !$response) : ?>
+        <div class="alert alert-danger text-center" role="alert">
+          Errore! 
+          La lunghezza della password deve essere compresa tra un minimo di <?php echo $minLimit ?> 
+          e un massimo di <?php echo $maxLimit ?> caratteri.
+        </div>
+      <?php endif; ?>
+        
+
+      <form action="<?php echo $_SERVER['PHP_SELF'] ?>" methods="GET" class="bg-warning p-5 rounded-2">
+
+      <div class="row mb-3">
+
+        <div class="col-6">
+          <label for="psw-length" class="form-label">Lunghezza password:</label>
+        </div>
+
+        <div class="col-2">
+          <input type="number" name="psw-length" id="psw-length" class="form-control">
+        </div>
+
+      </div>
+
+      <div class="row mb-3">
+
+        <div class="col-6">
+          <label class="form-label">Consenti ripetizioni di uno o più caratteri:</label>
+        </div>
+
+        <div class="col-2">
+
+          <div>
+            <input class="form-check-input" type="radio" name="allow-repetitions" value="1" id="yes-repetitions" checked>
+            <label class="form-check-label" for="yes-repetitions">Si</label>
+          </div>
+
+          <div>
+            <input class="form-check-input" type="radio" name="allow-repetitions" value="0" id="no-repetitions">
+            <label class="form-check-label" for="no-repetitions">No</label>
+          </div>
+
+        </div>
+        
+      </div>
+
+      <div class="row mb-3">
+        <div class="col-1 offset-6">
+
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="characters[]" id="characters1" value="0">
+            <label class="form-check-label" for="characters1">Lettere</label>
+          </div>
+    
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="characters[]" id="characters2" value="1">
+            <label class="form-check-label" for="characters2">Numeri</label>
+          </div>
+    
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="characters[]" id="characters3" value="2">
+            <label class="form-check-label" for="characters3">Simboli</label>
+          </div>
+
+        </div>
+      </div>
+    
+      <button type="submit" class="btn btn-primary">INVIA</button>
+      <button type="reset" class="btn btn-secondary">Annulla</button>
+    
+      </form>
+      
+    </div>
+
+  </div>
+
 </body>
 </html>
