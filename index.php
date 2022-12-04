@@ -16,19 +16,15 @@ Dare all’utente anche la possibilità di permettere o meno la ripetizione di c
 
 <?php
 
+// Import functions.php
+
+require_once __DIR__ . '/functions.php';
+
 // var_dump($_SERVER);
 
 var_dump($_GET);
 
 $psw_length = (int)$_GET['psw-length'];
-
-function password_generate($chars) {
-
-  $data = '1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcefghijklmnopqrstuvwxyz!?&%$<>^+-*/()[]{}@#_=';
-
-  return substr(str_shuffle($data), 0, $chars);
-
-} 
 
 
 ?>
