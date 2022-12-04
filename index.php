@@ -24,7 +24,23 @@ require_once __DIR__ . '/functions.php';
 
 var_dump($_GET);
 
-$psw_length = (int)$_GET['psw-length'];
+// se non è vuoto il parametro in GET genero la password
+if(!empty($_GET['psw-length'])){
+
+  // creo la variabile $psw come risultato della funzione password_generate
+  $psw = password_generate((int)$_GET['psw-length']);
+  
+  // apro la sessione
+  session_start();
+  // inizializzo la variabile di sessione
+  $_SESSION['psw'] = $psw;
+  // scelgo la destinazione
+  header('Location: ./result.php');
+
+}
+
+
+// $psw_length = (int)$_GET['psw-length'];
 
 
 ?>
@@ -42,6 +58,7 @@ $psw_length = (int)$_GET['psw-length'];
   <title>PHP Strong Password Generator</title>
 
 </head>
+
 <body>
 
   <form action="<?php echo $_SERVER['PHP_SELF'] ?>" methods="GET">
@@ -52,8 +69,6 @@ $psw_length = (int)$_GET['psw-length'];
 
   
   </form>
-
-  <p><?php echo password_generate($psw_length)?></p>
   
 </body>
 </html>
