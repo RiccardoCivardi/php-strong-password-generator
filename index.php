@@ -21,10 +21,11 @@ Dare all’utente anche la possibilità di permettere o meno la ripetizione di c
 var_dump($_GET);
 
 // Faccio partire la $_SESSION se non è già attiva
-session_unset();
-if(isset($_SESSION)) {
-  session_start();
-}
+// ??? mi da errore mostrandomi sempre la stessa psw
+// session_unset();
+// if(isset($_SESSION)) {
+//   session_start();
+// }
 
 // Import functions.php
 require_once __DIR__ . '/functions.php';
@@ -42,7 +43,7 @@ $listChars = [
 //se non passo la tipologia di caratteri l'array di estrazione è completo, altrimenti è ciò che gli passo
 $characters = $_GET['characters'] ?? [0,1,2];
 
-var_dump($characters);
+// var_dump($characters);
 
 // se non è vuoto il parametro (psw-length) in GET genero la password
 if(!empty($_GET['psw-length'])){
@@ -57,6 +58,7 @@ if(!empty($_GET['psw-length'])){
     $psw = generatePassword($_GET['psw-length'], $listChars, $characters);
     
     // inizializzo la variabile di sessione
+    session_start();
     $_SESSION['psw'] = $psw;
     // scelgo la destinazione
     header('Location: ./result.php');

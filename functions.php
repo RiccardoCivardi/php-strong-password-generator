@@ -13,27 +13,34 @@ function isCorrectLength($num, $min, $max) {
 }
 
 
-// funzione semplice milestone 1
-// function passwordGenerate($chars) {
-
-//   $data = '1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcefghijklmnopqrstuvwxyz!?&%$<>^+-*/()[]{}@#_=';
-
-//   return substr(str_shuffle($data), 0, $chars);
-
-// } 
-
 // funzione complessa milestone 4
 function generatePassword($length, $listChars, $characters){
   $psw = '';
+
+  // controllo lunghezza massima numeri e simboli
+  $totalLength = 0;
+
+  foreach($characters as $charIndex){
+    // calcolo la lunghezza totale dei caratteri
+    $totalLength += strlen($listChars[$charIndex]);
+    
+  }
+
+  // lunghezza blindata se non ci sono abbastanza caratteri e se ho scelto di non avere ripetizioni
+  if($length > $totalLength && $_GET['allow-repetitions'] == 1 ) $length = $totalLength;
+
 
   while(strlen($psw) < $length){
 
     $char = getChar($listChars, $characters);
 
     // controllo univocità 
-    if($_GET['allow-repetitions'] || !str_contains($psw, $char)){
+    if($_GET['allow-repetitions'] && !str_contains($psw, $char)){
+      $psw .= $char;
+    } else {
       $psw .= $char;
     }
+
 
   }
 
@@ -42,12 +49,15 @@ function generatePassword($length, $listChars, $characters){
 
 function getChar($listChars, $characters) {
 
+  // estraggo indice array caratteri
   $index = $characters[rand(0, count($characters)-1)];
 
   // echo $index;
 
+  // prendo la lista di caratteri estratta 
   $charStr = $listChars[$index];
 
+  // estraggo random dalla lista selezionata
   return $charStr[rand(0,strlen($charStr)-1)];
 }
 
