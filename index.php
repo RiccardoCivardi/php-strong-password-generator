@@ -16,6 +16,10 @@ Dare all’utente anche la possibilità di permettere o meno la ripetizione di c
 
 <?php
 
+// var_dump($_SERVER);
+
+var_dump($_GET);
+
 // Faccio partire la $_SESSION se non è già attiva
 session_unset();
 if(isset($_SESSION)) {
@@ -28,19 +32,29 @@ require_once __DIR__ . '/functions.php';
 // Import vars.php
 require_once __DIR__ . '/vars.php';
 
-// var_dump($_SERVER);
+//list characters
+$listChars = [
+  'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ',
+  '0123456789',
+  '!?&%$<>^+-*/()[]{}@#_='
+];
 
-var_dump($_GET);
+//se non passo la tipologia di caratteri l'array di estrazione è completo, altrimenti è ciò che gli passo
+$characters = $_GET['characters'] ?? [0,1,2];
 
-// se non è vuoto il parametro in GET genero la password
+var_dump($characters);
+
+// se non è vuoto il parametro (psw-length) in GET genero la password
 if(!empty($_GET['psw-length'])){
 
+  // controllo la lunghezza
   $response = isCorrectLength((int)$_GET['psw-length'], $minLimit, $maxLimit);
 
+  // se la lunghezza va bene
   if($response) {
 
-    // creo la variabile $psw come risultato della funzione password_generate
-    $psw = passwordGenerate((int)$_GET['psw-length']);
+    // creo la variabile $psw come risultato della funzione generatePassword
+    $psw = generatePassword($_GET['psw-length'], $listChars, $characters);
     
     // inizializzo la variabile di sessione
     $_SESSION['psw'] = $psw;
@@ -76,7 +90,7 @@ if(!empty($_GET['psw-length'])){
       <h1 class="text-light text-center mb-2">Strong Password Generator</h1>
       <h2 class="text-light text-center mb-4">Genera una password sicura</h2>
 
-      <?php if(empty($_GET)) : ?>
+      <?php if(empty($_GET['psw-length'])) : ?>
         <div class="alert alert-info text-center" role="alert">
           Scegliere una password con un minimo di <?php echo $minLimit ?> 
           e un massimo di <?php echo $maxLimit ?> caratteri.
@@ -101,6 +115,7 @@ if(!empty($_GET['psw-length'])){
         </div>
 
         <div class="col-2">
+          <!--Possibile controllo ulteriore min="< ?php //echo $minLimit?>" max="< ?php echo $maxLimit?>" -->
           <input type="number" name="psw-length" id="psw-length" class="form-control">
         </div>
 
@@ -115,12 +130,12 @@ if(!empty($_GET['psw-length'])){
         <div class="col-2">
 
           <div>
-            <input class="form-check-input" type="radio" name="allow-repetitions" value="1" id="yes-repetitions" checked>
+            <input class="form-check-input" type="radio" name="allow-repetitions" value="0" id="yes-repetitions" checked>
             <label class="form-check-label" for="yes-repetitions">Si</label>
           </div>
 
           <div>
-            <input class="form-check-input" type="radio" name="allow-repetitions" value="0" id="no-repetitions">
+            <input class="form-check-input" type="radio" name="allow-repetitions" value="1" id="no-repetitions">
             <label class="form-check-label" for="no-repetitions">No</label>
           </div>
 
@@ -149,7 +164,7 @@ if(!empty($_GET['psw-length'])){
         </div>
       </div>
     
-      <button type="submit" class="btn btn-primary">INVIA</button>
+      <button type="submit" class="btn btn-primary me-3">INVIA</button>
       <button type="reset" class="btn btn-secondary">Annulla</button>
     
       </form>

@@ -25,7 +25,7 @@ session_start();
 
       <h2 class="text-light text-center mb-4">La password generata è:</h2>
 
-      <p class="bg-info py-2 rounded-2 mb-4"><?php echo $_SESSION['psw']?></p>
+      <p class="bg-info py-2 rounded-2 mb-4"><?php echo htmlspecialchars($_SESSION['psw']) ?></p>
 
       <a href="./index.php" class="btn btn-light">Torna alla home</a>
 
